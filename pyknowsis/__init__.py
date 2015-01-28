@@ -179,20 +179,36 @@ class KnowsisClient(object):
 
         raise Exception(response.content)
 
-    def asset_intraday_sentiment(self, identifier):
+    def asset_intraday_sentiment(self, identifier, startdate=None, enddate=None):
 
         url = '/assets/{0}/intraday/'.format(identifier)
-        response = self._get_response_for_signed_request(url, headers={'Accept': 'application/json'})
+        querysting = {}
+        if startdate:
+            querysting['startdate'] = startdate.strftime("%Y%m%d%H%M")
+        if enddate:
+            querysting['enddate'] = enddate.strftime("%Y%m%d%H%M")
+
+
+        response = self._get_response_for_signed_request(url, querystring=querysting,
+                                                         headers={'Accept': 'application/json'})
 
         if response.status_code == 200:
             return create_asset_sentiment(response.json())
 
         raise Exception(response.content)
 
-    def asset_sentiment(self, identifier):
+    def asset_sentiment(self, identifier, startdate=None, enddate=None):
 
         url = '/assets/{0}/sentiment/'.format(identifier)
-        response = self._get_response_for_signed_request(url, headers={'Accept': 'application/json'})
+
+        querysting = {}
+        if startdate:
+            querysting['startdate'] = startdate.strftime("%Y%m%d")
+        if enddate:
+            querysting['enddate'] = enddate.strftime("%Y%m%d")
+
+        response = self._get_response_for_signed_request(url, querystring=querysting,
+                                                         headers={'Accept': 'application/json'})
 
         if response.status_code == 200:
             return create_asset_sentiment(response.json())
