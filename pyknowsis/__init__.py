@@ -5,6 +5,7 @@ from datetime import datetime
 import oauth2 as oauth
 import requests
 
+__version__ = 0.1
 
 default_headers = {'Accept': 'application/json', 'Connection': 'close'}
 
@@ -182,14 +183,15 @@ class KnowsisClient(object):
     def asset_intraday_sentiment(self, identifier, startdate=None, enddate=None):
 
         url = '/assets/{0}/intraday/'.format(identifier)
-        querysting = {}
+        querystring = {}
+
         if startdate:
-            querysting['startdate'] = startdate.strftime("%Y%m%d%H%M")
+            querystring['startdate'] = startdate.strftime("%Y%m%d%H%M")
+            
         if enddate:
-            querysting['enddate'] = enddate.strftime("%Y%m%d%H%M")
+            querystring['enddate'] = enddate.strftime("%Y%m%d%H%M")
 
-
-        response = self._get_response_for_signed_request(url, querystring=querysting,
+        response = self._get_response_for_signed_request(url, querystring=querystring,
                                                          headers={'Accept': 'application/json'})
 
         if response.status_code == 200:
@@ -201,13 +203,15 @@ class KnowsisClient(object):
 
         url = '/assets/{0}/sentiment/'.format(identifier)
 
-        querysting = {}
-        if startdate:
-            querysting['startdate'] = startdate.strftime("%Y%m%d")
-        if enddate:
-            querysting['enddate'] = enddate.strftime("%Y%m%d")
+        querystring = {}
 
-        response = self._get_response_for_signed_request(url, querystring=querysting,
+        if startdate:
+            querystring['startdate'] = startdate.strftime("%Y%m%d")
+
+        if enddate:
+            querystring['enddate'] = enddate.strftime("%Y%m%d")
+
+        response = self._get_response_for_signed_request(url, querystring=querystring,
                                                          headers={'Accept': 'application/json'})
 
         if response.status_code == 200:
@@ -286,4 +290,9 @@ class Identifier():
     def __init__(self, identifier, type):
         self.type = type
         self.identifier = identifier
+
+
+class KnowsisAPIError(Exception):
+    def __init__(self, args, kwargs):
+        super(KnowsisAPIError, self).__init__(*args, **kwargs)
 

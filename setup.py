@@ -1,5 +1,5 @@
 from setuptools import setup
-from knowsis import version
+from pyknowsis import __version__
 
 from pip.req import parse_requirements
 
@@ -11,7 +11,7 @@ test_requirements = [str(ir.req) for ir in parse_requirements('requirements-test
 setup(
     name='pyknowsis',
     include_package_data=True,
-    version=version,
+    version=__version__,
     packages=[
         'pyknowsis',
     ],
