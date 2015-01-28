@@ -1,0 +1,3 @@
+requests
+simplejson
+git+https://github.com/knowsis/python-oauth2.git@master#egg=oauth2
