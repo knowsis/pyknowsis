@@ -1,24 +1,19 @@
 from setuptools import setup
-from pyknowsis import __version__
-
-from pip.req import parse_requirements
-
-
-install_requirements = [str(ir.req) for ir in parse_requirements('requirements.txt')]
-test_requirements = [str(ir.req) for ir in parse_requirements('requirements-testing.txt')]
 
 
 setup(
     name='pyknowsis',
     include_package_data=True,
-    version=__version__,
+    version="0.1.4.1",
     packages=[
         'pyknowsis',
+        'tests'
     ],
     description='API Wrapper for the Knowsis API',
     author='Knowsis Ltd',
+    author_email='mark@knowsis.com',
     dependency_links=[],
-    install_requires=install_requirements,
-    tests_require=test_requirements,
+    install_requires=['requests', 'simplejson', 'oauth2'],
+    tests_require=[],
     url="https://github.com/knowsis/pyknowsis"
 )

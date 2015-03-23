@@ -5,8 +5,6 @@ from datetime import datetime
 import oauth2 as oauth
 import requests
 
-__version__ = 0.1
-
 default_headers = {'Accept': 'application/json', 'Connection': 'close'}
 
 base_uri = 'https://api.knows.is'
