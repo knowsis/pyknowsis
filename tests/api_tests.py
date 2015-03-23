@@ -1,10 +1,11 @@
 from datetime import datetime, time, timedelta
 import unittest
+import os
 
 from pyknowsis import KnowsisClient, Identifier
 
-oauth_consumer_key = ""
-oauth_consumer_secret = ""
+oauth_consumer_key = os.environ.get("KNOWSIS_API_CONSUMER_KEY")
+oauth_consumer_secret = os.environ.get("KNOWSIS_API_CONSUMER_SECRET")
 
 
 class TestAssetsEndpoint(unittest.TestCase):
