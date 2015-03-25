@@ -257,11 +257,20 @@ class KnowsisClient(object):
 
         return response.json()
 
-    def asset_pricing(self, identifier):
+    def asset_pricing(self, identifier, startdate=None, enddate=None):
 
         url = '/assets/{0}/pricing/'.format(identifier)
 
-        response = self._get_response_for_signed_request(url, headers={'Accept': 'application/json'})
+        querystring = {}
+
+        if startdate:
+            querystring['startdate'] = startdate.strftime("%Y%m%d")
+
+        if enddate:
+            querystring['enddate'] = enddate.strftime("%Y%m%d")
+
+        response = self._get_response_for_signed_request(url, querystring=querystring,
+                                                         headers={'Accept': 'application/json'})
 
         if response.status_code == 200:
             return create_asset_pricing(response.json())
