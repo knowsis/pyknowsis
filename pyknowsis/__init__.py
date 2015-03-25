@@ -12,7 +12,7 @@ base_uri = 'https://api.knows.is'
 
 def create_identifiers(identifiers):
 
-    return [Identifier(identifier.get('value'), identifier.get('type')) for identifier in identifiers]
+    return [Identifier(identifier.get('identifier'), identifier.get('type')) for identifier in identifiers]
 
 
 def create_asset(asset_json):
@@ -58,6 +58,40 @@ def create_asset_sentiment(asset_sentiment_json):
     datapoints = [create_datapoint(datapoint) for datapoint in asset_sentiment_json.get('datapoints')]
 
     return AssetSentiment(name, identifier, startdate, enddate, datapoints)
+
+
+def create_price_datapoint(datapoint_json):
+    date = datetime.strptime(datapoint_json.get('date'), "%Y-%m-%dT%H:%M:%S")
+    high = create_sentiment(datapoint_json.get('high', {}))
+    low = create_sentiment(datapoint_json.get('low', {}))
+    open = create_sentiment(datapoint_json.get('open', {}))
+    close = create_sentiment(datapoint_json.get('close', {}))
+    adj_close = create_sentiment(datapoint_json.get('adj_close', {}))
+    last = create_sentiment(datapoint_json.get('last', {}))
+
+    volume = create_volume(datapoint_json.get('volume', {}))
+
+    return PriceDatapoint(date=date, high=high, low=low, open=open, close=close, adj_close=adj_close, last=last, volume=volume)
+
+
+class AssetPricing(object):
+    def __init__(self, name, identifier, startdate, enddate, datapoints):
+        self.pricing = datapoints
+        self.enddate = enddate
+        self.startdate = startdate
+        self.identifier = identifier
+        self.name = name
+
+
+def create_asset_pricing(asset_pricing_json):
+    name = asset_pricing_json.get('name')
+    identifier = asset_pricing_json.get('identifer')
+    startdate = datetime.strptime(asset_pricing_json.get('startdate'), "%Y-%m-%dT%H:%M:%S")
+    enddate = datetime.strptime(asset_pricing_json.get('enddate'), "%Y-%m-%dT%H:%M:%S")
+
+    datapoints = [create_price_datapoint(datapoint) for datapoint in asset_pricing_json.get('pricing')]
+
+    return AssetPricing(name, identifier, startdate, enddate, datapoints)
 
 
 class KnowsisClient(object):
@@ -224,6 +258,17 @@ class KnowsisClient(object):
 
         return response.json()
 
+    def asset_pricing(self, identifier):
+
+        url = '/assets/{0}/pricing/'.format(identifier)
+
+        response = self._get_response_for_signed_request(url, headers={'Accept': 'application/json'})
+
+        if response.status_code == 200:
+            return create_asset_pricing(response.json())
+
+        raise Exception(response.content)
+
     def asset_tweets(self, identifier):
 
         url = '/assets/{0}/tweets/'.format(identifier)
@@ -294,3 +339,14 @@ class KnowsisAPIError(Exception):
     def __init__(self, args, kwargs):
         super(KnowsisAPIError, self).__init__(*args, **kwargs)
 
+
+class PriceDatapoint(object):
+    def __init__(self, date, high, low, open, close, adj_close, last, volume):
+        self.volume = volume
+        self.last = last
+        self.adj_close = adj_close
+        self.close = close
+        self.open = open
+        self.low = low
+        self.high = high
+        self.date = date
