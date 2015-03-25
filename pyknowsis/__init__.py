@@ -61,7 +61,7 @@ def create_asset_sentiment(asset_sentiment_json):
 
 
 def create_price_datapoint(datapoint_json):
-    date = datetime.strptime(datapoint_json.get('date'), "%Y-%m-%dT%H:%M:%S")
+    date = datetime.strptime(datapoint_json.get('date'), "%Y-%m-%dT%H:%M:%S%z")
     high = create_sentiment(datapoint_json.get('high', {}))
     low = create_sentiment(datapoint_json.get('low', {}))
     open = create_sentiment(datapoint_json.get('open', {}))
