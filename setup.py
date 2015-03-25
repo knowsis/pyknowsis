@@ -13,7 +13,7 @@ setup(
     author='Knowsis Ltd',
     author_email='mark@knowsis.com',
     dependency_links=[],
-    install_requires=['requests', 'simplejson', 'oauth2'],
+    install_requires=['requests', 'simplejson', 'oauth2', 'dateutil'],
     tests_require=[],
     url="https://github.com/knowsis/pyknowsis"
 )

@@ -1,7 +1,7 @@
 import urlparse
 import time
 from datetime import datetime
-
+from dateutil.parser import parse as dateparse
 import oauth2 as oauth
 import requests
 
@@ -61,7 +61,7 @@ def create_asset_sentiment(asset_sentiment_json):
 
 
 def create_price_datapoint(datapoint_json):
-    date = datetime.strptime(datapoint_json.get('date'), "%Y-%m-%dT%H:%M:%S%z")
+    date = dateparse(datapoint_json.get('date'))
     high = create_sentiment(datapoint_json.get('high', {}))
     low = create_sentiment(datapoint_json.get('low', {}))
     open = create_sentiment(datapoint_json.get('open', {}))
