@@ -62,14 +62,13 @@ def create_asset_sentiment(asset_sentiment_json):
 
 def create_price_datapoint(datapoint_json):
     date = dateparse(datapoint_json.get('date'))
-    high = create_sentiment(datapoint_json.get('high', {}))
-    low = create_sentiment(datapoint_json.get('low', {}))
-    open = create_sentiment(datapoint_json.get('open', {}))
-    close = create_sentiment(datapoint_json.get('close', {}))
-    adj_close = create_sentiment(datapoint_json.get('adj_close', {}))
-    last = create_sentiment(datapoint_json.get('last', {}))
-
-    volume = create_volume(datapoint_json.get('volume', {}))
+    high = datapoint_json.get('high', {})
+    low = datapoint_json.get('low', {})
+    open = datapoint_json.get('open', {})
+    close = datapoint_json.get('close', {})
+    adj_close = datapoint_json.get('adj_close', {})
+    last = datapoint_json.get('last', {})
+    volume = datapoint_json.get('volume', {})
 
     return PriceDatapoint(date=date, high=high, low=low, open=open, close=close, adj_close=adj_close, last=last, volume=volume)
 
