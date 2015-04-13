@@ -11,7 +11,6 @@ base_uri = 'https://api.knows.is'
 
 
 def create_identifiers(identifiers):
-
     return [Identifier(identifier.get('identifier'), identifier.get('type')) for identifier in identifiers]
 
 
@@ -70,7 +69,8 @@ def create_price_datapoint(datapoint_json):
     last = datapoint_json.get('last', {})
     volume = datapoint_json.get('volume', {})
 
-    return PriceDatapoint(date=date, high=high, low=low, open=open, close=close, adj_close=adj_close, last=last, volume=volume)
+    return PriceDatapoint(date=date, high=high, low=low, open=open, close=close, adj_close=adj_close, last=last,
+                          volume=volume)
 
 
 class AssetPricing(object):
@@ -221,7 +221,7 @@ class KnowsisClient(object):
 
         if startdate:
             querystring['startdate'] = startdate.strftime("%Y%m%d%H%M")
-            
+
         if enddate:
             querystring['enddate'] = enddate.strftime("%Y%m%d%H%M")
 
@@ -293,12 +293,18 @@ class AssetList():
         self.assets = assets
         self.meta = meta
 
+    def __repr__(self):
+        return self.__dict__
+
 
 class Asset():
     def __init__(self, asset_name, asset_identifiers, asset_type):
         self.asset_type = asset_type
         self.asset_identifiers = asset_identifiers
         self.asset_name = asset_name
+
+    def __repr__(self):
+        return self.__dict__
 
 
 class AssetSentiment():
@@ -309,6 +315,8 @@ class AssetSentiment():
         self.name = name
         self.identifier = identifier
 
+    def __repr__(self):
+        return self.__dict__
 
 class SentimentDatapoints():
     def __init__(self, date, sentiment, volume):
@@ -316,6 +324,8 @@ class SentimentDatapoints():
         self.sentiment = sentiment
         self.date = date
 
+    def __repr__(self):
+        return self.__dict__
 
 class Sentiment():
     def __init__(self, current, previous, change):
@@ -323,12 +333,18 @@ class Sentiment():
         self.previous = previous
         self.current = current
 
+    def __repr__(self):
+        return self.__dict__
+
 
 class Volume():
     def __init__(self, current, previous, change):
         self.change = change
         self.previous = previous
         self.current = current
+
+    def __repr__(self):
+        return self.__dict__
 
 
 class Meta():
@@ -338,12 +354,17 @@ class Meta():
         self.pagesize = pagesize
         self.page = page
 
+    def __repr__(self):
+        return self.__dict__
+
 
 class Identifier():
-
     def __init__(self, identifier, type):
         self.type = type
         self.identifier = identifier
+
+    def __repr__(self):
+        return self.__dict__
 
 
 class KnowsisAPIError(Exception):
@@ -361,3 +382,6 @@ class PriceDatapoint(object):
         self.low = low
         self.high = high
         self.date = date
+
+    def __repr__(self):
+        return self.__dict__
