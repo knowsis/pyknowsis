@@ -22,7 +22,7 @@ def create_asset(asset_json):
 
 
 def create_meta(json):
-    return Meta(json.get('page'), json.get('pagesize'), json.get('items'), json.get('totalitems'))
+    return Meta(json.get('page'), json.get('pagesize'), json.get('items'), json.get('total_items'))
 
 
 def create_sentiment(sentiment_json):
@@ -154,6 +154,9 @@ class KnowsisClient(object):
             querystring['page'] = page
         if pagesize:
             querystring['pagesize'] = pagesize
+
+        if pagesize > 100:
+            raise ValueError("Pagesize cannot be greater than 100")
 
         response = self._get_response_for_signed_request(url, querystring=querystring,
                                                          headers={'Accept': 'application/json'})
@@ -329,8 +332,8 @@ class Volume():
 
 
 class Meta():
-    def __init__(self, page, pagesize, items, totalitems):
-        self.totalitems = totalitems
+    def __init__(self, page, pagesize, items, total_items):
+        self.total_items = total_items
         self.items = items
         self.pagesize = pagesize
         self.page = page
