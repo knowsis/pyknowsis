@@ -35,9 +35,9 @@ class TestAssetEndpoint(unittest.TestCase):
 
         asset = api.asset(identifier="AAPL")
 
-        self.assertEqual(asset.asset_name, "Apple Inc")
-        self.assertIsInstance(asset.asset_identifiers, list)
-        self.assertIsInstance(asset.asset_identifiers[0], Identifier)
+        self.assertEqual(asset.name, "Apple Inc")
+        self.assertIsInstance(asset.identifiers, list)
+        self.assertIsInstance(asset.identifiers[0], Identifier)
 
 
 class TestAssetSentimentEndpoint(unittest.TestCase):

@@ -299,9 +299,9 @@ class AssetList():
 
 class Asset():
     def __init__(self, asset_name, asset_identifiers, asset_type):
-        self.asset_type = asset_type
-        self.asset_identifiers = asset_identifiers
-        self.asset_name = asset_name
+        self.type = asset_type
+        self.identifiers = asset_identifiers
+        self.name = asset_name
 
     def __repr__(self):
         return self.__dict__
