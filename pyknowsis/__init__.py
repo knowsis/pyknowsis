@@ -294,7 +294,7 @@ class AssetList():
         self.meta = meta
 
     def __repr__(self):
-        return self.__dict__
+        return str(self.__dict__)
 
 
 class Asset():
@@ -304,7 +304,7 @@ class Asset():
         self.name = asset_name
 
     def __repr__(self):
-        return self.__dict__
+        return str(self.__dict__)
 
 
 class AssetSentiment():
@@ -316,7 +316,7 @@ class AssetSentiment():
         self.identifier = identifier
 
     def __repr__(self):
-        return self.__dict__
+        return str(self.__dict__)
 
 class SentimentDatapoints():
     def __init__(self, date, sentiment, volume):
@@ -325,7 +325,7 @@ class SentimentDatapoints():
         self.date = date
 
     def __repr__(self):
-        return self.__dict__
+        return str(self.__dict__)
 
 class Sentiment():
     def __init__(self, current, previous, change):
@@ -334,7 +334,7 @@ class Sentiment():
         self.current = current
 
     def __repr__(self):
-        return self.__dict__
+        return str(self.__dict__)
 
 
 class Volume():
@@ -344,7 +344,7 @@ class Volume():
         self.current = current
 
     def __repr__(self):
-        return self.__dict__
+        return str(self.__dict__)
 
 
 class Meta():
@@ -355,7 +355,7 @@ class Meta():
         self.page = page
 
     def __repr__(self):
-        return self.__dict__
+        return str(self.__dict__)
 
 
 class Identifier():
@@ -364,7 +364,7 @@ class Identifier():
         self.identifier = identifier
 
     def __repr__(self):
-        return self.__dict__
+        return str(self.__dict__)
 
 
 class KnowsisAPIError(Exception):
@@ -384,4 +384,4 @@ class PriceDatapoint(object):
         self.date = date
 
     def __repr__(self):
-        return self.__dict__
+        return str(self.__dict__)
