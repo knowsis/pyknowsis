@@ -11,17 +11,26 @@ base_uri = 'https://api.knows.is'
 
 
 def create_identifiers(identifiers):
-    return [Identifier(identifier.get('identifier'), identifier.get('type')) for identifier in identifiers]
+
+    return [
+        Identifier(identifier.get('identifier'), identifier.get('type'))
+        for identifier
+        in identifiers
+    ]
+
 
 
 def create_asset(asset_json):
     name = asset_json.get('name')
     identifiers = create_identifiers(asset_json.get('identifiers'))
-    return Asset(asset_name=name, asset_identifiers=identifiers, asset_type=None)
+
+    return Asset(asset_name=name, asset_identifiers=identifiers,
+                 asset_type=None)
 
 
 def create_meta(json):
-    return Meta(json.get('page'), json.get('pagesize'), json.get('items'), json.get('total_items'))
+    return Meta(json.get('page'), json.get('pagesize'), json.get('items'),
+                json.get('total_items'))
 
 
 def create_sentiment(sentiment_json):
@@ -40,21 +49,42 @@ def create_volume(volume_json):
     return Volume(current, previous, change)
 
 
+def create_counts(counts_json):
+    positive = counts_json.get('positive')
+    negative = counts_json.get('negative')
+    neutral = counts_json.get('neutral')
+    total = counts_json.get('total')
+
+    return Counts(positive, negative, neutral, total)
+
+
+
 def create_datapoint(datapoint_json):
     date = datetime.strptime(datapoint_json.get('date'), "%Y-%m-%dT%H:%M:%S")
     sentiment = create_sentiment(datapoint_json.get('sentiment', {}))
     volume = create_volume(datapoint_json.get('volume', {}))
 
-    return SentimentDatapoints(date=date, sentiment=sentiment, volume=volume)
+    counts = create_counts(datapoint_json.get("raw_counts", {}))
+
+    return SentimentDatapoints(
+        date=date, sentiment=sentiment, volume=volume, counts=counts)
+
 
 
 def create_asset_sentiment(asset_sentiment_json):
     name = asset_sentiment_json.get('name')
     identifier = asset_sentiment_json.get('identifer')
-    startdate = datetime.strptime(asset_sentiment_json.get('startdate'), "%Y-%m-%dT%H:%M:%S")
-    enddate = datetime.strptime(asset_sentiment_json.get('enddate'), "%Y-%m-%dT%H:%M:%S")
 
-    datapoints = [create_datapoint(datapoint) for datapoint in asset_sentiment_json.get('datapoints')]
+    startdate = datetime.strptime(
+        asset_sentiment_json.get('startdate'), "%Y-%m-%dT%H:%M:%S")
+    enddate = datetime.strptime(
+        asset_sentiment_json.get('enddate'),"%Y-%m-%dT%H:%M:%S")
+
+    datapoints = [
+        create_datapoint(dp)
+        for dp
+        in asset_sentiment_json.get('datapoints')
+    ]
 
     return AssetSentiment(name, identifier, startdate, enddate, datapoints)
 
@@ -69,8 +99,9 @@ def create_price_datapoint(datapoint_json):
     last = datapoint_json.get('last', {})
     volume = datapoint_json.get('volume', {})
 
-    return PriceDatapoint(date=date, high=high, low=low, open=open, close=close, adj_close=adj_close, last=last,
-                          volume=volume)
+
+    return PriceDatapoint(date=date, high=high, low=low, open=open, close=close,
+                          adj_close=adj_close, last=last, volume=volume)
 
 
 class AssetPricing(object):
@@ -85,10 +116,15 @@ class AssetPricing(object):
 def create_asset_pricing(asset_pricing_json):
     name = asset_pricing_json.get('name')
     identifier = asset_pricing_json.get('identifer')
-    startdate = datetime.strptime(asset_pricing_json.get('startdate'), "%Y-%m-%dT%H:%M:%S")
-    enddate = datetime.strptime(asset_pricing_json.get('enddate'), "%Y-%m-%dT%H:%M:%S")
 
-    datapoints = [create_price_datapoint(datapoint) for datapoint in asset_pricing_json.get('pricing')]
+    startdate = datetime.strptime(asset_pricing_json.get('startdate'),
+                                  "%Y-%m-%dT%H:%M:%S")
+    enddate = datetime.strptime(asset_pricing_json.get('enddate'),
+                                "%Y-%m-%dT%H:%M:%S")
+
+    datapoints = [create_price_datapoint(datapoint) for datapoint in
+                  asset_pricing_json.get('pricing')]
+
 
     return AssetPricing(name, identifier, startdate, enddate, datapoints)
 
@@ -99,7 +135,10 @@ class KnowsisClient(object):
         self.oauth_consumer_key = oauth_consumer_key
         self.oauth_consumer_secret = oauth_consumer_secret
 
-    def _get_response_for_signed_request(self, url, headers={}, querystring=None, use_https=False):
+
+    def _get_response_for_signed_request(
+            self, url, headers={}, querystring=None, use_https=False):
+
         request_headers = default_headers
 
         request_headers['User-Agent'] = 'pyknowsis'
@@ -113,7 +152,9 @@ class KnowsisClient(object):
         if use_https:
             url = url.replace('http', 'https')
 
-        request_url = self._generate_valid_signed_request_url(url, 'GET', querystring=querystring)
+        request_url = self._generate_valid_signed_request_url(
+            url, 'GET', querystring=querystring)
+
 
         attempts = 0
 
@@ -127,13 +168,18 @@ class KnowsisClient(object):
 
             attempts += 1
 
-    def _generate_valid_signed_request_url(self, url, method='GET', querystring={}):
 
-        consumer = oauth.Consumer(self.oauth_consumer_key, self.oauth_consumer_secret)
+    def _generate_valid_signed_request_url(
+            self, url, method='GET', querystring={}):
 
-        oauth_params = {'oauth_version': '1.0',
-                        'oauth_nonce': oauth.generate_nonce(),
-                        'oauth_timestamp': int(time.time())}
+        consumer = oauth.Consumer(
+            self.oauth_consumer_key, self.oauth_consumer_secret)
+
+        oauth_params = {
+            'oauth_version': '1.0',
+            'oauth_nonce': oauth.generate_nonce(),
+            'oauth_timestamp': int(time.time())
+        }
 
         if querystring:
             oauth_params.update(querystring)
@@ -145,6 +191,7 @@ class KnowsisClient(object):
 
         signed_querystring = urlparse.urlparse(request.to_url())[4]
         return '{0}?{1}'.format(url, signed_querystring)
+
 
     def asset_list(self, url, page=None, pagesize=None):
 
@@ -158,11 +205,19 @@ class KnowsisClient(object):
         if pagesize > 100:
             raise ValueError("Pagesize cannot be greater than 100")
 
-        response = self._get_response_for_signed_request(url, querystring=querystring,
-                                                         headers={'Accept': 'application/json'})
+        response = self._get_response_for_signed_request(
+            url, querystring=querystring,
+            headers={'Accept': 'application/json'})
+
         if response.status_code == 200:
             meta = create_meta(response.json().get('meta'))
-            assets = [create_asset(asset) for asset in response.json().get('assets')]
+
+            assets = [
+                create_asset(asset)
+                for asset
+                in response.json().get('assets')
+            ]
+
             return AssetList(meta, assets)
 
         raise Exception(response.content)
@@ -208,13 +263,18 @@ class KnowsisClient(object):
     def asset(self, identifier):
 
         url = '/assets/{0}/'.format(identifier)
-        response = self._get_response_for_signed_request(url, headers={'Accept': 'application/json'})
+
+        response = self._get_response_for_signed_request(
+            url, headers={'Accept': 'application/json'})
+
         if response.status_code == 200:
             return create_asset(response.json())
 
         raise Exception(response.content)
 
-    def asset_intraday_sentiment(self, identifier, startdate=None, enddate=None):
+
+    def asset_intraday_sentiment(
+            self, identifier, startdate=None, enddate=None, sparse=False):
 
         url = '/assets/{0}/intraday/'.format(identifier)
         querystring = {}
@@ -225,15 +285,21 @@ class KnowsisClient(object):
         if enddate:
             querystring['enddate'] = enddate.strftime("%Y%m%d%H%M")
 
-        response = self._get_response_for_signed_request(url, querystring=querystring,
-                                                         headers={'Accept': 'application/json'})
+        querystring['sparse'] = sparse
+
+        response = self._get_response_for_signed_request(
+            url, querystring=querystring,
+            headers={'Accept': 'application/json'}
+        )
 
         if response.status_code == 200:
             return create_asset_sentiment(response.json())
 
         raise Exception(response.content)
 
-    def asset_sentiment(self, identifier, startdate=None, enddate=None):
+
+    def asset_sentiment(
+            self, identifier, startdate=None, enddate=None, sparse=False):
 
         url = '/assets/{0}/sentiment/'.format(identifier)
 
@@ -245,8 +311,11 @@ class KnowsisClient(object):
         if enddate:
             querystring['enddate'] = enddate.strftime("%Y%m%d")
 
-        response = self._get_response_for_signed_request(url, querystring=querystring,
-                                                         headers={'Accept': 'application/json'})
+        querystring['sparse'] = sparse
+
+        response = self._get_response_for_signed_request(
+            url, querystring=querystring,
+            headers={'Accept': 'application/json'})
 
         if response.status_code == 200:
             return create_asset_sentiment(response.json())
@@ -256,7 +325,9 @@ class KnowsisClient(object):
     def asset_themes(self, identifier):
 
         url = '/assets/{0}/themes/'.format(identifier)
-        response = self._get_response_for_signed_request(url, headers={'Accept': 'application/json'})
+
+        response = self._get_response_for_signed_request(url, headers={
+            'Accept': 'application/json'})
 
         return response.json()
 
@@ -272,8 +343,9 @@ class KnowsisClient(object):
         if enddate:
             querystring['enddate'] = enddate.strftime("%Y%m%d")
 
-        response = self._get_response_for_signed_request(url, querystring=querystring,
-                                                         headers={'Accept': 'application/json'})
+        response = self._get_response_for_signed_request(
+            url, querystring=querystring,
+            headers={'Accept': 'application/json'})
 
         if response.status_code == 200:
             return create_asset_pricing(response.json())
@@ -283,12 +355,15 @@ class KnowsisClient(object):
     def asset_tweets(self, identifier):
 
         url = '/assets/{0}/tweets/'.format(identifier)
-        response = self._get_response_for_signed_request(url, headers={'Accept': 'application/json'})
+
+        response = self._get_response_for_signed_request(url, headers={
+            'Accept': 'application/json'})
 
         return response.json()
 
 
-class AssetList():
+class AssetList:
+
     def __init__(self, meta, assets):
         self.assets = assets
         self.meta = meta
@@ -297,7 +372,8 @@ class AssetList():
         return str(self.__dict__)
 
 
-class Asset():
+class Asset:
+
     def __init__(self, asset_name, asset_identifiers, asset_type):
         self.type = asset_type
         self.identifiers = asset_identifiers
@@ -307,7 +383,8 @@ class Asset():
         return str(self.__dict__)
 
 
-class AssetSentiment():
+class AssetSentiment:
+
     def __init__(self, name, identifier, startdate, enddate, datapoints):
         self.datapoints = datapoints
         self.enddate = enddate
@@ -318,16 +395,31 @@ class AssetSentiment():
     def __repr__(self):
         return str(self.__dict__)
 
-class SentimentDatapoints():
-    def __init__(self, date, sentiment, volume):
+
+class SentimentDatapoints:
+    def __init__(self, date, sentiment, volume, counts):
         self.volume = volume
         self.sentiment = sentiment
+        self.counts = counts
         self.date = date
 
     def __repr__(self):
         return str(self.__dict__)
 
-class Sentiment():
+
+class Counts:
+    def __init__(self, positive, negative, neutral, total):
+        self.positive = positive
+        self.negative = negative
+        self.neutral = neutral
+        self.total = total
+
+    def __repr__(self):
+        return str(self.__dict__)
+
+
+class Sentiment:
+
     def __init__(self, current, previous, change):
         self.change = change
         self.previous = previous
@@ -337,7 +429,9 @@ class Sentiment():
         return str(self.__dict__)
 
 
-class Volume():
+
+class Volume:
+
     def __init__(self, current, previous, change):
         self.change = change
         self.previous = previous
@@ -347,7 +441,8 @@ class Volume():
         return str(self.__dict__)
 
 
-class Meta():
+class Meta:
+
     def __init__(self, page, pagesize, items, total_items):
         self.total_items = total_items
         self.items = items
@@ -358,7 +453,9 @@ class Meta():
         return str(self.__dict__)
 
 
-class Identifier():
+
+class Identifier:
+
     def __init__(self, identifier, type):
         self.type = type
         self.identifier = identifier
@@ -384,4 +481,6 @@ class PriceDatapoint(object):
         self.date = date
 
     def __repr__(self):
+
         return str(self.__dict__)
+
