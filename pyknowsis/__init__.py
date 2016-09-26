@@ -63,7 +63,7 @@ def create_datapoint(datapoint_json):
     sentiment = create_sentiment(datapoint_json.get('sentiment', {}))
     volume = create_volume(datapoint_json.get('volume', {}))
 
-    counts = create_counts(datapoint_json.get("counts", {}))
+    counts = create_counts(datapoint_json.get("tweet_counts", {}))
 
     return SentimentDatapoints(
         date=date, sentiment=sentiment, volume=volume, counts=counts)

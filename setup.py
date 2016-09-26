@@ -4,7 +4,7 @@ from setuptools import setup
 setup(
     name='pyknowsis',
     include_package_data=True,
-    version="0.1.4.1",
+    version="0.1.4.2",
     packages=[
         'pyknowsis',
         'tests'
