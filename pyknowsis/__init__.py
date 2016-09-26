@@ -58,17 +58,15 @@ def create_counts(counts_json):
     return Counts(positive, negative, neutral, total)
 
 
-
 def create_datapoint(datapoint_json):
     date = datetime.strptime(datapoint_json.get('date'), "%Y-%m-%dT%H:%M:%S")
     sentiment = create_sentiment(datapoint_json.get('sentiment', {}))
     volume = create_volume(datapoint_json.get('volume', {}))
 
-    counts = create_counts(datapoint_json.get("raw_counts", {}))
+    counts = create_counts(datapoint_json.get("counts", {}))
 
     return SentimentDatapoints(
         date=date, sentiment=sentiment, volume=volume, counts=counts)
-
 
 
 def create_asset_sentiment(asset_sentiment_json):
@@ -98,7 +96,6 @@ def create_price_datapoint(datapoint_json):
     adj_close = datapoint_json.get('adj_close', {})
     last = datapoint_json.get('last', {})
     volume = datapoint_json.get('volume', {})
-
 
     return PriceDatapoint(date=date, high=high, low=low, open=open, close=close,
                           adj_close=adj_close, last=last, volume=volume)
