@@ -4,7 +4,7 @@ from setuptools import setup
 setup(
     name='pyknowsis',
     include_package_data=True,
-    version="0.1.4.2",
+    version="0.1.5",
     packages=[
         'pyknowsis',
         'tests'
@@ -15,5 +15,6 @@ setup(
     dependency_links=[],
     install_requires=['requests', 'simplejson', 'oauth2', 'python-dateutil'],
     tests_require=[],
-    url="https://github.com/knowsis/pyknowsis"
+    url="https://github.com/knowsis/pyknowsis",
+    download_url='https://github.com/knowsis/pyknowsis/tarball/0.1.5',
 )
