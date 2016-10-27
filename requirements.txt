@@ -1,4 +1,4 @@
 requests
 simplejson
-python-dateutil
+python-dateutil==2.5.3
 git+https://github.com/knowsis/python-oauth2.git@master#egg=oauth2
