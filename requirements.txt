@@ -1,4 +1,4 @@
 requests
-simplejson
+simplejson==3.9.0
 python-dateutil==2.5.3
 git+https://github.com/knowsis/python-oauth2.git@master#egg=oauth2
