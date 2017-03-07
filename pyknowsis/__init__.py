@@ -132,7 +132,6 @@ class KnowsisClient(object):
         self.oauth_consumer_key = oauth_consumer_key
         self.oauth_consumer_secret = oauth_consumer_secret
 
-
     def _get_response_for_signed_request(
             self, url, headers={}, querystring=None, use_https=False):
 
@@ -165,7 +164,6 @@ class KnowsisClient(object):
 
             attempts += 1
 
-
     def _generate_valid_signed_request_url(
             self, url, method='GET', querystring={}):
 
@@ -188,7 +186,6 @@ class KnowsisClient(object):
 
         signed_querystring = urlparse.urlparse(request.to_url())[4]
         return '{0}?{1}'.format(url, signed_querystring)
-
 
     def asset_list(self, url, page=None, pagesize=None):
 
@@ -269,7 +266,6 @@ class KnowsisClient(object):
 
         raise Exception(response.content)
 
-
     def asset_intraday_sentiment(
             self, identifier, startdate=None, enddate=None, sparse=False):
 
@@ -294,7 +290,6 @@ class KnowsisClient(object):
 
         raise Exception(response.content)
 
-
     def asset_sentiment(
             self, identifier, startdate=None, enddate=None, sparse=False):
 
@@ -303,10 +298,10 @@ class KnowsisClient(object):
         querystring = {}
 
         if startdate:
-            querystring['startdate'] = startdate.strftime("%Y%m%d")
+            querystring['startdate'] = startdate.strftime("%Y%m%d%H%M")
 
         if enddate:
-            querystring['enddate'] = enddate.strftime("%Y%m%d")
+            querystring['enddate'] = enddate.strftime("%Y%m%d%H%M")
 
         querystring['sparse'] = sparse
 
@@ -426,7 +421,6 @@ class Sentiment:
         return str(self.__dict__)
 
 
-
 class Volume:
 
     def __init__(self, current, previous, change):
@@ -448,7 +442,6 @@ class Meta:
 
     def __repr__(self):
         return str(self.__dict__)
-
 
 
 class Identifier:
